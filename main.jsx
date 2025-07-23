@@ -12,12 +12,14 @@ export default function Main({
     setInputValue
 }) {
     const recipeSection = React.useRef(null)
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState("");
 
     React.useEffect(() => {
         if (recipeShown !== "" && recipeSection.current !== null) {
             recipeSection.current.scrollIntoView({
                 behavior: 'smooth',
-            })// Scroll to the recipe section when it is updated
+            })
         }
     }, [recipeShown])
 
@@ -38,8 +40,29 @@ export default function Main({
     }
 
     async function toggleRecipeShown() {
-        const recipeMarkdown = await getRecipe(ingredients);
-        setRecipeShown(recipeMarkdown);
+        if (ingredients.length < 3) {
+            setError("Please enter at least 3 ingredients to get a recipe.");
+            return
+
+        }
+        setRecipeShown("");    
+        setIsLoading(true)
+        setError("")
+        const TIMEOUT_MS = 10_000
+        const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out. Please try again.")), TIMEOUT_MS))
+        try {
+        const recipeMarkdown = await Promise.race([
+        getRecipe(ingredients),
+        timeoutPromise
+        ])
+        setRecipeShown(recipeMarkdown || "")
+        } catch (err) {
+            setError(err.message)
+        } 
+        finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -68,8 +91,28 @@ export default function Main({
                     removeIngredient={removeIngredient}
                 />
             )}
+            {isLoading && (
+            <div className="loading-container">
+                <img src="/loading.gif" alt="Loading…" />
+            </div>
+            )}
 
-            {recipeShown && <ChefBotRecipe recipeShown={recipeShown} />}
+
+            {!isLoading && !error && recipeShown && (
+                <div ref={recipeSection}>
+                <ChefBotRecipe recipeShown={recipeShown} />
+                </div>
+            )}
+
+            {error && (
+            <div className="error-message" style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <p>{error}</p>
+            <button className="retry-button" onClick={toggleRecipeShown} disabled={isLoading}>
+                Retry
+            </button>
+            </div>
+            )}
+
         </main>
     );
 }

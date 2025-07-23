@@ -173,3 +173,37 @@ ul.ingredients-list .remove:hover img {
     border-radius: 8px;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;   
+  align-items: center;       
+  min-height: 100px;        
+  margin: 1rem 0;           
+}
+
+.loading-container img {
+  width: 64px;    
+  height: 64px;   
+  object-fit: contain;
+}
+
+.retry-button {
+    border: none;
+    border-radius: 6px;
+    background: #4438cad7;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    color: #FAFAF8;
+    padding: 9px 17px;
+    font-family: Inter, sans-serif;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.error-message {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+    color: #EF4444;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+}
