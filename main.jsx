@@ -11,6 +11,16 @@ export default function Main({
     inputValue,
     setInputValue
 }) {
+    const recipeSection = React.useRef(null)
+
+    React.useEffect(() => {
+        if (recipeShown !== "" && recipeSection.current !== null) {
+            recipeSection.current.scrollIntoView({
+                behavior: 'smooth',
+            })// Scroll to the recipe section when it is updated
+        }
+    }, [recipeShown])
+
     function removeIngredient(ingredientToRemove) {
         setIngredients(prev =>
             prev.filter(ingredient => ingredient !== ingredientToRemove)
@@ -52,6 +62,7 @@ export default function Main({
 
             {ingredients.length > 0 && (
                 <IngredientsList
+                    ref = {recipeSection}
                     ingredients={ingredients}
                     toggleRecipeShown={toggleRecipeShown}
                     removeIngredient={removeIngredient}
